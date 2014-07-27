@@ -11,6 +11,7 @@
 
         var defaults = {
             displayList : true,
+            touchControls : true,
             transitionDuration : 400
         };
 
@@ -28,11 +29,9 @@
         pgwSlideshow.config = {};
         pgwSlideshow.data = [];
         pgwSlideshow.currentSlide = 0;
-        pgwSlideshow.slideCount = 0;
-        
-        pgwSlideshow.touchListInProgress = false;
+        pgwSlideshow.slideCount = 0;        
+        pgwSlideshow.touchCurrentFirstPosition = false;
         pgwSlideshow.touchListLastPosition = false;
-        pgwSlideshow.touchListDirection = false;
 
         // Init
         var init = function() {
@@ -44,72 +43,9 @@
             setup();
             pgwSlideshow.checkList();
             
-            // Resize
+            // Resize trigger
             $(window).resize(function() {
                 pgwSlideshow.checkList();
-            });
-            
-            // Touch start
-            pgwSlideshow.plugin.find('.ps-list ul').on('touchstart', function(e) {
-                pgwSlideshow.touchListInProgress = true;
-            });
-
-            // Touch move
-            pgwSlideshow.plugin.find('.ps-list ul').on('touchmove', function(e) {
-                try {               
-                    if (e.originalEvent.touches[0].clientX) {
-                        var lastPosition = (pgwSlideshow.touchListLastPosition == false ? 0 : pgwSlideshow.touchListLastPosition);
-                        nbPixels = (pgwSlideshow.touchListLastPosition == false ? 1 : Math.abs(lastPosition - e.originalEvent.touches[0].clientX));
-                        pgwSlideshow.touchListLastPosition = e.originalEvent.touches[0].clientX;
-                        
-                        if (lastPosition > e.originalEvent.touches[0].clientX) {
-                            pgwSlideshow.touchListDirection = 'left';
-                        } else if (lastPosition < e.originalEvent.touches[0].clientX) {
-                            pgwSlideshow.touchListDirection = 'right';
-                        }
-                    }
-                    
-                    var listObject = pgwSlideshow.plugin.find('.ps-list ul');
-                    var oldPosition = parseInt(listObject.css('left'));
-                    
-                    if (pgwSlideshow.touchListDirection == 'left') {
-                        var containerObject = pgwSlideshow.plugin.find('.ps-list');
-                        var containerWidth = containerObject.width();
-                        var listWidth = listObject.width();                        
-                        
-                        var marginLeft = parseInt(listObject.css('margin-left'));
-                        var marginRight = parseInt(listObject.css('margin-right'));
-                        containerWidth -= (marginLeft + marginRight);
-                        
-                        var maxPosition = -(listWidth - containerWidth);
-                        var newPosition = oldPosition - nbPixels;
-
-                        if (newPosition > maxPosition) {
-                            listObject.css('left', newPosition);
-                        }
-                    
-                    } else if (pgwSlideshow.touchListDirection == 'right') {
-                        var newPosition = oldPosition + nbPixels;
-                        
-                        if (newPosition < 0) {
-                            listObject.css('left', newPosition);
-                        } else {
-                            listObject.css('left', 0);
-                        }
-                    }
-                    
-                } catch(e) {
-                    pgwSlideshow.touchListInProgress = false;
-                    pgwSlideshow.touchListLastPosition = false;
-                    pgwSlideshow.touchListDirection = false;
-                }
-            });
-
-            // Touch end
-            pgwSlideshow.plugin.find('.ps-list ul').on('touchend', function(e) {
-                pgwSlideshow.touchListInProgress = false;
-                pgwSlideshow.touchListLastPosition = false;
-                pgwSlideshow.touchListDirection = false;
             });
             
             return true;
@@ -131,6 +67,7 @@
             
             // Prev / Next icons
             if (pgwSlideshow.slideCount > 1) {
+            
                 pgwSlideshow.plugin.find('.ps-current').prepend('<span class="ps-prev"><span class="ps-prevIcon"></span></span>');
                 pgwSlideshow.plugin.find('.ps-current').append('<span class="ps-next"><span class="ps-nextIcon"></span></span>');                
                 pgwSlideshow.plugin.find('.ps-current .ps-prev').click(function() {
@@ -139,6 +76,41 @@
                 pgwSlideshow.plugin.find('.ps-current .ps-next').click(function() {
                     pgwSlideshow.nextSlide();
                 });
+                
+                // Touch controls
+                if (pgwSlideshow.config.touchControls) {
+                
+                    pgwSlideshow.plugin.find('.ps-current').on('touchstart', function(e) {
+                        try {
+                            if (e.originalEvent.touches[0].clientX && pgwSlideshow.touchCurrentFirstPosition == false) {
+                                pgwSlideshow.touchCurrentFirstPosition = e.originalEvent.touches[0].clientX;
+                                console.log('start', pgwSlideshow.touchCurrentFirstPosition);
+                            }
+                        } catch(e) {
+                            pgwSlideshow.touchCurrentFirstPosition = false;
+                        }
+                    });
+                
+                    pgwSlideshow.plugin.find('.ps-current').on('touchmove', function(e) {
+                        try {
+                            if (e.originalEvent.touches[0].clientX && pgwSlideshow.touchCurrentFirstPosition != false) {
+                                if (e.originalEvent.touches[0].clientX > (pgwSlideshow.touchCurrentFirstPosition + 20)) {
+                                    pgwSlideshow.touchCurrentFirstPosition = false;
+                                    pgwSlideshow.previousSlide();
+                                } else if (e.originalEvent.touches[0].clientX < (pgwSlideshow.touchCurrentFirstPosition - 20)) {
+                                    pgwSlideshow.touchCurrentFirstPosition = false;
+                                    pgwSlideshow.nextSlide();
+                                }                                
+                            }                            
+                        } catch(e) {
+                            pgwSlideshow.touchCurrentFirstPosition = false;
+                        }
+                    });
+
+                    pgwSlideshow.plugin.find('.ps-current').on('touchend', function(e) {
+                        pgwSlideshow.touchCurrentFirstPosition = false;
+                    });   
+                }
             }
 
             // Add list buttons
@@ -167,15 +139,12 @@
                     }
                 }
 
-                // Disable native links in the right list
                 $(this).css('cursor', 'pointer').click(function(event) {
                     event.preventDefault();
                     displayCurrent(element.id);
                 });
 
-                // Set the list width
                 listWidth += $(this).width();
-                
                 elementId++;
             });
             
@@ -339,6 +308,8 @@
 
         // Check slide list
         pgwSlideshow.checkList = function() {
+            if (! pgwSlideshow.config.displayList) return false;       
+        
             var containerObject = pgwSlideshow.plugin.find('.ps-list');
             var containerWidth = containerObject.width();
             var listObject = pgwSlideshow.plugin.find('.ps-list ul');
@@ -351,6 +322,7 @@
                 var marginRight = parseInt(listObject.css('margin-right'));
                 containerWidth -= (marginLeft + marginRight);
                 
+                // Left button
                 containerObject.find('.ps-prev').show().unbind('click').click(function() {
                     var oldPosition = parseInt(listObject.css('left'));
                     var newPosition = oldPosition + containerWidth;
@@ -364,6 +336,7 @@
                     listObject.css('left', newPosition);
                 });
                 
+                // Right button
                 containerObject.find('.ps-next').show().unbind('click').click(function() {               
                     var oldPosition = parseInt(listObject.css('left'));
                     var newPosition = oldPosition - containerWidth;
@@ -377,12 +350,66 @@
                     
                     listObject.css('left', newPosition);
                 });
+
+                // Touch move
+                pgwSlideshow.plugin.find('.ps-list ul').on('touchmove', function(e) {
+                    try {
+                        if (e.originalEvent.touches[0].clientX) {
+                            var lastPosition = (pgwSlideshow.touchListLastPosition == false ? 0 : pgwSlideshow.touchListLastPosition);
+                            nbPixels = (pgwSlideshow.touchListLastPosition == false ? 1 : Math.abs(lastPosition - e.originalEvent.touches[0].clientX));
+                            pgwSlideshow.touchListLastPosition = e.originalEvent.touches[0].clientX;
+
+                            var touchDirection = '';
+                            if (lastPosition > e.originalEvent.touches[0].clientX) {
+                                touchDirection = 'left';
+                            } else if (lastPosition < e.originalEvent.touches[0].clientX) {
+                                touchDirection = 'right';
+                            }
+                        }
+
+                        var oldPosition = parseInt(listObject.css('left'));
+                        
+                        if (touchDirection == 'left') {
+                            var containerWidth = containerObject.width();
+                            var listWidth = listObject.width();                        
+                            
+                            var marginLeft = parseInt(listObject.css('margin-left'));
+                            var marginRight = parseInt(listObject.css('margin-right'));
+                            containerWidth -= (marginLeft + marginRight);
+                            
+                            var maxPosition = -(listWidth - containerWidth);
+                            var newPosition = oldPosition - nbPixels;
+
+                            if (newPosition > maxPosition) {
+                                listObject.css('left', newPosition);
+                            }
+                        
+                        } else if (touchDirection == 'right') {
+                            var newPosition = oldPosition + nbPixels;
+                            
+                            if (newPosition < 0) {
+                                listObject.css('left', newPosition);
+                            } else {
+                                listObject.css('left', 0);
+                            }
+                        }
+                        
+                    } catch(e) {
+                        pgwSlideshow.touchListLastPosition = false;
+                    }
+                });
+
+                // Touch end
+                pgwSlideshow.plugin.find('.ps-list ul').on('touchend', function(e) {
+                    pgwSlideshow.touchListLastPosition = false;
+                });
                 
             } else {
                 var marginLeft = parseInt((containerWidth - listWidth) / 2);
                 listObject.css('left', 0).css('margin-left', marginLeft);
                 containerObject.find('.ps-prev').hide();               
-                containerObject.find('.ps-next').hide();
+                containerObject.find('.ps-next').hide();                
+                pgwSlideshow.plugin.find('.ps-list ul').unbind('touchstart touchmove touchend');
             }
             
             return true;
