@@ -41,13 +41,15 @@
 
             // Setup
             setup();
-            pgwSlideshow.checkList();
-            
-            // Resize trigger
-            $(window).resize(function() {
+
+            if (pgwSlideshow.config.displayList) {
                 pgwSlideshow.checkList();
-            });
-            
+
+                $(window).resize(function() {
+                    pgwSlideshow.checkList();
+                });
+            }
+
             return true;
         };
         
@@ -77,14 +79,13 @@
                     pgwSlideshow.nextSlide();
                 });
                 
-                // Touch controls
+                // Touch controls for current image
                 if (pgwSlideshow.config.touchControls) {
                 
                     pgwSlideshow.plugin.find('.ps-current').on('touchstart', function(e) {
                         try {
                             if (e.originalEvent.touches[0].clientX && pgwSlideshow.touchCurrentFirstPosition == false) {
                                 pgwSlideshow.touchCurrentFirstPosition = e.originalEvent.touches[0].clientX;
-                                console.log('start', pgwSlideshow.touchCurrentFirstPosition);
                             }
                         } catch(e) {
                             pgwSlideshow.touchCurrentFirstPosition = false;
@@ -94,10 +95,10 @@
                     pgwSlideshow.plugin.find('.ps-current').on('touchmove', function(e) {
                         try {
                             if (e.originalEvent.touches[0].clientX && pgwSlideshow.touchCurrentFirstPosition != false) {
-                                if (e.originalEvent.touches[0].clientX > (pgwSlideshow.touchCurrentFirstPosition + 20)) {
+                                if (e.originalEvent.touches[0].clientX > (pgwSlideshow.touchCurrentFirstPosition + 50)) {
                                     pgwSlideshow.touchCurrentFirstPosition = false;
                                     pgwSlideshow.previousSlide();
-                                } else if (e.originalEvent.touches[0].clientX < (pgwSlideshow.touchCurrentFirstPosition - 20)) {
+                                } else if (e.originalEvent.touches[0].clientX < (pgwSlideshow.touchCurrentFirstPosition - 50)) {
                                     pgwSlideshow.touchCurrentFirstPosition = false;
                                     pgwSlideshow.nextSlide();
                                 }                                
@@ -112,10 +113,6 @@
                     });   
                 }
             }
-
-            // Add list buttons
-            pgwSlideshow.plugin.find('.ps-list').prepend('<span class="ps-prev"><span class="ps-prevIcon"></span></span>');
-            pgwSlideshow.plugin.find('.ps-list').append('<span class="ps-next"><span class="ps-nextIcon"></span></span>');                
 
             // Get slideshow elements
             var elementId = 1;
@@ -148,8 +145,15 @@
                 elementId++;
             });
             
-            // Set the list width
-            pgwSlideshow.plugin.find('ul').width(listWidth);
+            // Set list elements
+            if (pgwSlideshow.config.displayList) {
+                pgwSlideshow.plugin.find('ul').width(listWidth);
+                pgwSlideshow.plugin.find('.ps-list').prepend('<span class="ps-prev"><span class="ps-prevIcon"></span></span>');
+                pgwSlideshow.plugin.find('.ps-list').append('<span class="ps-next"><span class="ps-nextIcon"></span></span>');
+                pgwSlideshow.plugin.find('.ps-list').show();
+            } else {
+                pgwSlideshow.plugin.find('.ps-list').hide();
+            }
 
             // Display the first element
             displayCurrent(1);
@@ -234,7 +238,9 @@
                 }
 
                 // Check selected item
-                checkSelectedItem();
+                if (pgwSlideshow.config.displayList) {
+                    checkSelectedItem();
+                }
                
             
             
@@ -351,58 +357,60 @@
                     listObject.css('left', newPosition);
                 });
 
-                // Touch move
-                pgwSlideshow.plugin.find('.ps-list ul').on('touchmove', function(e) {
-                    try {
-                        if (e.originalEvent.touches[0].clientX) {
-                            var lastPosition = (pgwSlideshow.touchListLastPosition == false ? 0 : pgwSlideshow.touchListLastPosition);
-                            nbPixels = (pgwSlideshow.touchListLastPosition == false ? 1 : Math.abs(lastPosition - e.originalEvent.touches[0].clientX));
-                            pgwSlideshow.touchListLastPosition = e.originalEvent.touches[0].clientX;
+                // Touc controls for the list
+                if (pgwSlideshow.config.touchControls) {
+                
+                    pgwSlideshow.plugin.find('.ps-list ul').on('touchmove', function(e) {
+                        try {
+                            if (e.originalEvent.touches[0].clientX) {
+                                var lastPosition = (pgwSlideshow.touchListLastPosition == false ? 0 : pgwSlideshow.touchListLastPosition);
+                                nbPixels = (pgwSlideshow.touchListLastPosition == false ? 1 : Math.abs(lastPosition - e.originalEvent.touches[0].clientX));
+                                pgwSlideshow.touchListLastPosition = e.originalEvent.touches[0].clientX;
 
-                            var touchDirection = '';
-                            if (lastPosition > e.originalEvent.touches[0].clientX) {
-                                touchDirection = 'left';
-                            } else if (lastPosition < e.originalEvent.touches[0].clientX) {
-                                touchDirection = 'right';
+                                var touchDirection = '';
+                                if (lastPosition > e.originalEvent.touches[0].clientX) {
+                                    touchDirection = 'left';
+                                } else if (lastPosition < e.originalEvent.touches[0].clientX) {
+                                    touchDirection = 'right';
+                                }
                             }
+
+                            var oldPosition = parseInt(listObject.css('left'));
+                            
+                            if (touchDirection == 'left') {
+                                var containerWidth = containerObject.width();
+                                var listWidth = listObject.width();                        
+                                
+                                var marginLeft = parseInt(listObject.css('margin-left'));
+                                var marginRight = parseInt(listObject.css('margin-right'));
+                                containerWidth -= (marginLeft + marginRight);
+                                
+                                var maxPosition = -(listWidth - containerWidth);
+                                var newPosition = oldPosition - nbPixels;
+
+                                if (newPosition > maxPosition) {
+                                    listObject.css('left', newPosition);
+                                }
+                            
+                            } else if (touchDirection == 'right') {
+                                var newPosition = oldPosition + nbPixels;
+                                
+                                if (newPosition < 0) {
+                                    listObject.css('left', newPosition);
+                                } else {
+                                    listObject.css('left', 0);
+                                }
+                            }
+                            
+                        } catch(e) {
+                            pgwSlideshow.touchListLastPosition = false;
                         }
+                    });
 
-                        var oldPosition = parseInt(listObject.css('left'));
-                        
-                        if (touchDirection == 'left') {
-                            var containerWidth = containerObject.width();
-                            var listWidth = listObject.width();                        
-                            
-                            var marginLeft = parseInt(listObject.css('margin-left'));
-                            var marginRight = parseInt(listObject.css('margin-right'));
-                            containerWidth -= (marginLeft + marginRight);
-                            
-                            var maxPosition = -(listWidth - containerWidth);
-                            var newPosition = oldPosition - nbPixels;
-
-                            if (newPosition > maxPosition) {
-                                listObject.css('left', newPosition);
-                            }
-                        
-                        } else if (touchDirection == 'right') {
-                            var newPosition = oldPosition + nbPixels;
-                            
-                            if (newPosition < 0) {
-                                listObject.css('left', newPosition);
-                            } else {
-                                listObject.css('left', 0);
-                            }
-                        }
-                        
-                    } catch(e) {
+                    pgwSlideshow.plugin.find('.ps-list ul').on('touchend', function(e) {
                         pgwSlideshow.touchListLastPosition = false;
-                    }
-                });
-
-                // Touch end
-                pgwSlideshow.plugin.find('.ps-list ul').on('touchend', function(e) {
-                    pgwSlideshow.touchListLastPosition = false;
-                });
+                    });
+                }
                 
             } else {
                 var marginLeft = parseInt((containerWidth - listWidth) / 2);
