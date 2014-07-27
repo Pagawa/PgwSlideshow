@@ -72,6 +72,7 @@
             
                 pgwSlideshow.plugin.find('.ps-current').prepend('<span class="ps-prev"><span class="ps-prevIcon"></span></span>');
                 pgwSlideshow.plugin.find('.ps-current').append('<span class="ps-next"><span class="ps-nextIcon"></span></span>');                
+                pgwSlideshow.plugin.find('.ps-current').append('<span class="ps-caption"><span></span></span>');                
                 pgwSlideshow.plugin.find('.ps-current .ps-prev').click(function() {
                     pgwSlideshow.previousSlide();
                 });                
@@ -125,16 +126,6 @@
 
                 $(this).addClass('elt_' + element.id);
                 $(this).wrapInner('<span class="ps-item' + (elementId == 1 ? ' ps-selected' : '') + '"></span>');                
-
-                if (element.title) {
-                    if ($(this).find('span').length == 1) {
-                        if ($(this).find('span').text() == '') {
-                            $(this).find('span').text(element.title);
-                        }
-                    } else {
-                        $(this).find('img').after('<span>' + element.title + '</span>');
-                    }
-                }
 
                 $(this).css('cursor', 'pointer').click(function(event) {
                     event.preventDefault();
@@ -236,72 +227,20 @@
                 } else {
                     elementContainer.html('');
                 }
+                
+                // Create caption
+                if (element.title) {
+                    elementContainer.find('.ps-caption span').text(element.title);
+                    elementContainer.find('.ps-caption').show();
+                } else {
+                    elementContainer.find('.ps-caption span').text('');
+                    elementContainer.find('.ps-caption').hide();
+                }
 
                 // Check selected item
                 if (pgwSlideshow.config.displayList) {
                     checkSelectedItem();
                 }
-               
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-                
-                /*ds ps-current : <span class="ps-caption" style="position: absolute; bottom: 0px; left: 0px; width: 100%; text-align: left; color: rgb(255, 255, 255);">sdfsldfsdf dfslsdf </span>
-                
-              
-                
-                
-
-                // Create caption
-                /*var elementText = '';
-                if (element.title) {
-                    elementText += '<b>' + element.title + '</b>';
-                }
-
-                if (element.description) {
-                    if (elementText != '') elementText += '<br>';
-                    elementText += element.description;
-                }
-
-                if (elementText != '') {
-                    elementContainer.append('<span>' + elementText + '</span>');
-                }
-
-                // Check if the element has a link
-                if (element.link) {
-                    var linkTarget = '';
-                    if (element.linkTarget) {
-                        var linkTarget = ' target="' + element.linkTarget + '"';
-                    }
-                    elementContainer.html('<a href="' + element.link + '"' + linkTarget + '>' + elementContainer.html() + '</a>');
-                }*/
-
-                // Set the container height
-                /*elementContainer.find('img').on('load', function() {
-                    if (typeof pgwSlideshow.plugin.find('.ps-current').attr('data-checked') == 'undefined' || pgwSlideshow.plugin.find('.ps-current').attr('data-checked') == null) {
-                    
-                        var maxHeight = pgwSlideshow.plugin.find('.ps-current img').height();
-                        updateHeight(maxHeight);
-                        pgwSlideshow.plugin.find('.ps-current').attr('data-checked', 'true');
-                        
-                        pgwSlideshow.window.resize(function() {
-                            var maxHeight = pgwSlideshow.plugin.find('.ps-current img').height();
-                            updateHeight(maxHeight);
-                        });
-
-                    } else if (pgwSlideshow.config.adaptiveHeight) {
-                        var maxHeight = pgwSlideshow.plugin.find('.ps-current img').height();
-                        updateHeight(maxHeight, true);
-                    }
-                });*/
 
                 // Display the new element
                 elementContainer.animate({

@@ -20,6 +20,25 @@
     max-width: 100%;
 }
 
+.pgwSlideshow .ps-caption {
+    background: rgba(0, 0, 0, 0.5);
+    filter:  progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#99000000', endColorstr='#99000000');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#99000000', endColorstr='#99000000')";
+    font-size: 0.9rem;
+    font-family: sans-serif;
+    color: #fff;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    display: none;
+}
+
+.pgwSlideshow .ps-caption span {
+    padding: 8px 10px 10px;
+    display: inline-block;
+}
+
 .pgwSlideshow .ps-list {
     border-top: 1px solid #777;
     box-shadow: 0 5px 10px 0 #333 inset;
