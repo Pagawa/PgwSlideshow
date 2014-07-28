@@ -53,6 +53,18 @@
             return true;
         };
         
+        // Set list width
+        var setListWidth = function() {
+            var listWidth = 0;
+            
+            pgwSlideshow.plugin.find('ul li').each(function() {
+                listWidth += $(this).width();
+            });
+            
+            pgwSlideshow.plugin.find('ul').width(listWidth);
+            return true;
+        }
+        
         // Setup
         var setup = function() {
         
@@ -116,9 +128,7 @@
             }
 
             // Get slideshow elements
-            var elementId = 1;
-            var listWidth = 0;
-            
+            var elementId = 1;           
             pgwSlideshow.plugin.find('ul li').each(function() {
                 var element = getElement($(this));
                 element.id = elementId;
@@ -132,13 +142,13 @@
                     displayCurrent(element.id);
                 });
 
-                listWidth += $(this).width();
                 elementId++;
             });
             
             // Set list elements
             if (pgwSlideshow.config.displayList) {
-                pgwSlideshow.plugin.find('ul').width(listWidth);
+                setListWidth();
+                
                 pgwSlideshow.plugin.find('.ps-list').prepend('<span class="ps-prev"><span class="ps-prevIcon"></span></span>');
                 pgwSlideshow.plugin.find('.ps-list').append('<span class="ps-next"><span class="ps-nextIcon"></span></span>');
                 pgwSlideshow.plugin.find('.ps-list').show();
@@ -253,7 +263,10 @@
 
         // Check slide list
         pgwSlideshow.checkList = function() {
-            if (! pgwSlideshow.config.displayList) return false;       
+            if (! pgwSlideshow.config.displayList) return false;    
+
+            // Refresh list width
+            setListWidth();
         
             var containerObject = pgwSlideshow.plugin.find('.ps-list');
             var containerWidth = containerObject.width();
