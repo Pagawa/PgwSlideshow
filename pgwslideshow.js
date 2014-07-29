@@ -12,7 +12,9 @@
         var defaults = {
             displayList : true,
             touchControls : true,
-            transitionDuration : 400
+            transitionDuration : 400,
+            beforeSlide : false,
+            afterSlide : false
         };
 
         if (this.length == 0) {
@@ -209,6 +211,11 @@
 
             pgwSlideshow.currentSlide = elementId;
             
+            // Before slide
+            if (typeof pgwSlideshow.config.beforeSlide == 'function') {
+                pgwSlideshow.config.beforeSlide(elementId);
+            }
+            
             // Fix for Zepto
             if (typeof elementContainer.animate == 'undefined') {
                 elementContainer.animate = function(css, duration, callback) {
@@ -250,6 +257,11 @@
                 // Check selected item
                 if (pgwSlideshow.config.displayList) {
                     checkSelectedItem();
+                }
+                
+                // After slide
+                if (typeof pgwSlideshow.config.afterSlide == 'function') {
+                    pgwSlideshow.config.afterSlide(elementId);
                 }
 
                 // Display the new element
