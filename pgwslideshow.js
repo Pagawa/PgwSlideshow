@@ -10,6 +10,7 @@
     $.fn.pgwSlideshow = function(options) {
 
         var defaults = {
+            mainClassName : 'pgwSlideshow',
             displayList : true,
             touchControls : true,
             transitionDuration : 400,
@@ -26,7 +27,7 @@
             return this;
         }
 
-        var pgwSlideshow = {};
+        var pgwSlideshow = this;
         pgwSlideshow.plugin = this;
         pgwSlideshow.config = {};
         pgwSlideshow.data = [];
@@ -71,11 +72,11 @@
         var setup = function() {
         
             // Create container
-            pgwSlideshow.plugin.removeClass('pgwSlideshow');
+            pgwSlideshow.plugin.removeClass(pgwSlideshow.config.mainClassName);
             pgwSlideshow.plugin.wrap('<div class="ps-list"></div>');
             pgwSlideshow.plugin = pgwSlideshow.plugin.parent();
 
-            pgwSlideshow.plugin.wrap('<div class="pgwSlideshow"></div>');
+            pgwSlideshow.plugin.wrap('<div class="' + pgwSlideshow.config.mainClassName + '"></div>');
             pgwSlideshow.plugin = pgwSlideshow.plugin.parent();
             
             pgwSlideshow.plugin.prepend('<div class="ps-current"><img src="" alt=""></div>');
@@ -454,21 +455,36 @@
         };
         
         // Destroy slider
-        /*pgwSlideshow.destroy = function(soft) {           
+        pgwSlideshow.destroy = function(soft) {
             pgwSlideshow.plugin.find('ul li').each(function() {
                 $(this).unbind('click');
             });
-
+            
+            var mainClassName = pgwSlideshow.config.mainClassName;
+            
             pgwSlideshow.data = [];
             pgwSlideshow.config = {};
             pgwSlideshow.currentSlide = 0;
             pgwSlideshow.slideCount = 0;
 
-            if (typeof soft != 'undefined') {              
-                pgwSlideshow.plugin.find('.ps-current').unwrap().remove();
-                pgwSlideshow.hide();
+            if (typeof soft != 'undefined') {            
+                pgwSlideshow.plugin.find('ul').unwrap();                
+                pgwSlideshow.plugin.children().not('ul').remove();
+                pgwSlideshow.plugin = pgwSlideshow.plugin.find('ul');
+                pgwSlideshow.plugin.removeClass().attr('style', null);
+                pgwSlideshow.plugin.addClass(mainClassName);                
+                pgwSlideshow.plugin.unwrap();
+                pgwSlideshow.plugin.hide();
+                
+                pgwSlideshow.plugin.find('li').each(function() {
+                    $(this).find('img').unwrap();
+                    $(this).removeClass().attr('style', null);
+                });
+                
             } else {
-                pgwSlideshow.parent().remove();
+                pgwSlideshow.parent().parent().remove();
+                pgwSlideshow.plugin = null;
+                pgwSlideshow = null;
             }
             
             return true;
@@ -489,7 +505,7 @@
             setup();
 
             return true;
-        };*/
+        };
         
         // Slideshow initialization
         init();
