@@ -1,5 +1,5 @@
 /**
- * PgwSlideshow - Version 1.0
+ * PgwSlideshow - Version 1.1
  *
  * Copyright 2014, Jonathan M. Piat
  * http://pgwjs.com - http://pagawa.com
@@ -35,7 +35,7 @@
 }
 
 .pgwSlideshow .ps-caption span {
-    padding: 12px 10px 10px;
+    padding: 7px;
     display: inline-block;
 }
 
@@ -189,6 +189,6 @@
     }
 
     .pgwSlideshow .ps-caption span {
-        padding: 7px 5px 5px;
+        padding: 5px;
     }
 }
