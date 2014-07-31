@@ -246,11 +246,16 @@
                 }
             }
 
+            // Disables previous animations
+            if (typeof elementContainer.stop == 'function') {
+                elementContainer.stop();
+            }
+
             // Opacify the current element
-            elementContainer.stop().animate({
+            elementContainer.animate({
                 opacity : 0,
             }, pgwSlideshow.config.transitionDuration, function() {
-            
+
                 pgwSlideshow.plugin.find('ul li .ps-item').removeClass('ps-selected');
                 pgwSlideshow.plugin.find('ul li.elt_' + elementId + ' .ps-item').addClass('ps-selected');
 
@@ -297,11 +302,11 @@
 
             return true;
         };
-        
+
         // Activate interval
         var activateInterval = function() {
             clearInterval(pgwSlideshow.eventInterval);
-        
+
             if (pgwSlideshow.slideCount > 1 && pgwSlideshow.config.autoSlide) {
                 pgwSlideshow.eventInterval = setInterval(function() {
                     if (pgwSlideshow.currentSlide + 1 <= pgwSlideshow.slideCount) {
@@ -309,10 +314,10 @@
                     } else {
                         var nextItem = 1;
                     }
-                    displayCurrent(nextItem);                    
+                    displayCurrent(nextItem);
                 }, pgwSlideshow.config.intervalDuration);
             }
-            
+
             return true;
         };
 
