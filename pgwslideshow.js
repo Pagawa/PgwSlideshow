@@ -1,5 +1,5 @@
 /**
- * PgwSlideshow - Version 1.1
+ * PgwSlideshow - Version 1.2
  *
  * Copyright 2014, Jonathan M. Piat
  * http://pgwjs.com - http://pagawa.com
@@ -13,9 +13,11 @@
             mainClassName : 'pgwSlideshow',
             displayList : true,
             touchControls : true,
-            transitionDuration : 400,
+            autoSlide : false,
             beforeSlide : false,
-            afterSlide : false
+            afterSlide : false,
+            transitionDuration : 400,
+            intervalDuration : 3000
         };
 
         if (this.length == 0) {
@@ -33,6 +35,7 @@
         pgwSlideshow.data = [];
         pgwSlideshow.currentSlide = 0;
         pgwSlideshow.slideCount = 0;
+        pgwSlideshow.eventInterval = null;
         pgwSlideshow.touchCurrentFirstPosition = false;
         pgwSlideshow.touchListLastPosition = false;
 
@@ -45,12 +48,18 @@
             // Setup
             setup();
 
+            // Check list parameters
             if (pgwSlideshow.config.displayList) {
                 pgwSlideshow.checkList();
 
                 $(window).resize(function() {
                     pgwSlideshow.checkList();
                 });
+            }
+
+            // Activate interval
+            if (pgwSlideshow.config.autoSlide) {
+                activateInterval();
             }
 
             return true;
@@ -157,6 +166,16 @@
                 pgwSlideshow.plugin.find('.ps-list').show();
             } else {
                 pgwSlideshow.plugin.find('.ps-list').hide();
+            }
+
+            // Attach slide events
+            if (pgwSlideshow.config.autoSlide) {
+                pgwSlideshow.plugin.on('mouseenter', function() {
+                    clearInterval(pgwSlideshow.eventInterval);
+                    pgwSlideshow.eventInterval = null;
+                }).on('mouseleave', function() {
+                    activateInterval();
+                });
             }
 
             // Display the first element
@@ -270,6 +289,29 @@
                     opacity : 1,
                 }, pgwSlideshow.config.transitionDuration);
             });
+
+            // Reset interval to avoid a half interval after an API control
+            if (typeof apiController != 'undefined' && pgwSlideshow.config.autoSlide) {
+                activateInterval();
+            }
+
+            return true;
+        };
+        
+        // Activate interval
+        var activateInterval = function() {
+            clearInterval(pgwSlideshow.eventInterval);
+        
+            if (pgwSlideshow.slideCount > 1 && pgwSlideshow.config.autoSlide) {
+                pgwSlideshow.eventInterval = setInterval(function() {
+                    if (pgwSlideshow.currentSlide + 1 <= pgwSlideshow.slideCount) {
+                        var nextItem = pgwSlideshow.currentSlide + 1;
+                    } else {
+                        var nextItem = 1;
+                    }
+                    displayCurrent(nextItem);                    
+                }, pgwSlideshow.config.intervalDuration);
+            }
             
             return true;
         };
@@ -416,6 +458,20 @@
             return true;
         };
 
+        // Start auto slide
+        pgwSlideshow.startSlide = function() {
+            pgwSlideshow.config.autoSlide = true;
+            activateInterval();
+            return true;
+        };
+
+        // Stop auto slide
+        pgwSlideshow.stopSlide = function() {
+            pgwSlideshow.config.autoSlide = false;
+            clearInterval(pgwSlideshow.eventInterval);
+            return true;
+        };
+
         // Get current slide
         pgwSlideshow.getCurrentSlide = function() {
             return pgwSlideshow.currentSlide;
@@ -456,6 +512,8 @@
         
         // Destroy slider
         pgwSlideshow.destroy = function(soft) {
+            clearInterval(pgwSlideshow.eventInterval);
+        
             pgwSlideshow.plugin.find('ul li').each(function() {
                 $(this).unbind('click');
             });
@@ -466,6 +524,7 @@
             pgwSlideshow.config = {};
             pgwSlideshow.currentSlide = 0;
             pgwSlideshow.slideCount = 0;
+            pgwSlideshow.eventInterval = null;
 
             if (typeof soft != 'undefined') {
 
@@ -507,12 +566,18 @@
             // Setup
             setup();
 
+            // Check list parameters
             if (pgwSlideshow.config.displayList) {
                 pgwSlideshow.checkList();
 
                 $(window).resize(function() {
                     pgwSlideshow.checkList();
                 });
+            }
+
+            // Activate interval
+            if (pgwSlideshow.config.autoSlide) {
+                activateInterval();
             }
 
             return true;
