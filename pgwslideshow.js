@@ -369,7 +369,7 @@
                     listObject.css('left', newPosition);
                 });
 
-                // Touc controls for the list
+                // Touch controls for the list
                 if (pgwSlideshow.config.touchControls) {
 
                     pgwSlideshow.plugin.find('.ps-list ul').on('touchmove', function(e) {
