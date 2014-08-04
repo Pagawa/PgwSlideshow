@@ -22,6 +22,7 @@ All issues or pull requests must be submitted through GitHub.
 ChangeLog
 ---------
 
+* 2014-08-04 - CSS fix for the current image (Version 1.3)
 * 2014-07-31 - Added auto-sliding (disabled by default) (Version 1.2)
 * 2014-07-30 - Destroy and Reload functions (Version 1.1)
 * 2014-07-29 - First commit (Version 1.0)
