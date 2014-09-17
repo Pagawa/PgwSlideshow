@@ -84,7 +84,7 @@
 
         // Update the current height
         var updateHeight = function(height, animate) {
-        
+
             // Check maxHeight
             if (pgwSlideshow.config.maxHeight) {
                 if (height + pgwSlideshow.plugin.find('.ps-list').height() > pgwSlideshow.config.maxHeight) {
@@ -369,10 +369,6 @@
         var fadeElement = function(element) {
             var elementContainer = pgwSlideshow.plugin.find('.ps-current > ul');
 
-            // Update list items
-            pgwSlideshow.plugin.find('.ps-list > ul > li .ps-item').removeClass('ps-selected');
-            pgwSlideshow.plugin.find('.ps-list > ul > li.elt_' + element.id + ' .ps-item').addClass('ps-selected');
-
             elementContainer.find('li').not('.elt_' + pgwSlideshow.currentSlide).not('.elt_' + element.id).each(function(){
                 if (typeof $(this).stop == 'function') {
                     $(this).stop();
@@ -549,6 +545,10 @@
             } else {
                 fadeElement(element);
             }
+            
+            // Update list items
+            pgwSlideshow.plugin.find('.ps-list > ul > li .ps-item').removeClass('ps-selected');
+            pgwSlideshow.plugin.find('.ps-list > ul > li.elt_' + element.id + ' .ps-item').addClass('ps-selected');
 
             // Reset interval to avoid a half interval after an API control
             if (typeof apiController != 'undefined' && pgwSlideshow.config.autoSlide) {
@@ -781,17 +781,28 @@
             displayElement(previousItem, true, 'right');
             return true;
         };
-        
+
         // Destroy slider
         pgwSlideshow.destroy = function(soft) {
             clearInterval(pgwSlideshow.intervalEvent);
-        
-            pgwSlideshow.plugin.find('ul li').each(function() {
-                $(this).unbind('click');
-            });
 
-            var mainClassName = pgwSlideshow.config.mainClassName;
+            if (typeof soft != 'undefined') {
+                pgwSlideshow.plugin.find('.ps-list > ul > li').each(function() {
+                    $(this).attr('style', null).removeClass().unbind('click');
+                    $(this).html($(this).find('span').html());
+                });
 
+                pgwSlideshow.plugin.find('.ps-current').remove();
+                pgwSlideshow.plugin.find('.ps-list').find('.ps-prev, .ps-next').remove();
+                pgwSlideshow.plugin.find('.ps-list > ul').addClass(pgwSlideshow.config.mainClassName).attr('style', '');
+                pgwSlideshow.plugin.find('.ps-list > ul').unwrap().unwrap();
+                pgwSlideshow.hide();
+
+            } else {
+                pgwSlideshow.parent().parent().remove();
+            }
+
+            pgwSlideshow.plugin = null;
             pgwSlideshow.data = [];
             pgwSlideshow.config = {};
             pgwSlideshow.currentSlide = 0;
@@ -800,29 +811,6 @@
             pgwSlideshow.intervalEvent = null;
             pgwSlideshow.touchFirstPosition = null;
             pgwSlideshow.window = null;
-
-            if (typeof soft != 'undefined') {
-
-                if (pgwSlideshow.plugin.find('div').length > 0) {
-                    pgwSlideshow.plugin.find('ul').unwrap();
-                    pgwSlideshow.plugin.children().not('ul').remove();
-                    pgwSlideshow.plugin = pgwSlideshow.plugin.find('ul');
-                    pgwSlideshow.plugin.removeClass().attr('style', null);
-                    pgwSlideshow.plugin.addClass(mainClassName);
-                    pgwSlideshow.plugin.unwrap();
-                    pgwSlideshow.plugin.hide();
-
-                    pgwSlideshow.plugin.find('li').each(function() {
-                        $(this).find('img').unwrap();
-                        $(this).removeClass().attr('style', null);
-                    });
-                }
-
-            } else {
-                pgwSlideshow.parent().parent().remove();
-                pgwSlideshow.plugin = null;
-                pgwSlideshow = null;
-            }
 
             return true;
         };
