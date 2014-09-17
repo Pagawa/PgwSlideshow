@@ -120,7 +120,7 @@
     border-left: 0;
     border-radius: 0 4px 4px 0;
     position: absolute;
-    padding: 20px 22px 20px 17px;
+    padding: 20px 20px 20px 15px;
     left: 0;
     top: 45%;
     cursor: pointer;
@@ -134,20 +134,20 @@
     border-right: 0;
     border-radius: 4px 0 0 4px;
     position: absolute;
-    padding: 20px 17px 20px 22px;
+    padding: 20px 15px 20px 20px;
     right: 0;
     top: 45%;
     cursor: pointer;
 }
 
 .pgwSlideshow .ps-list .ps-prev {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     filter:  progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#bb000000', endColorstr='#bb000000');
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#bb000000', endColorstr='#bb000000')";
     border: 1px solid #777;
     border-left: 0;
     border-radius: 0 4px 4px 0;
-    padding: 20px 17px 20px 12px;
+    padding: 20px 15px 20px 12px;
     cursor: pointer;
     position: absolute;
     left: 0;
@@ -157,13 +157,13 @@
 }
 
 .pgwSlideshow .ps-list .ps-next {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     filter:  progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#bb000000', endColorstr='#bb000000');
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#bb000000', endColorstr='#bb000000')";
     border: 1px solid #777;
     border-right: 0;
     border-radius: 4px 0 0 4px;
-    padding: 20px 12px 20px 17px;
+    padding: 20px 12px 20px 15px;
     cursor: pointer;
     position: absolute;
     right: 0;
@@ -192,12 +192,12 @@
 }
 
 .pgwSlideshow.narrow .ps-list .ps-prev {
-    padding: 15px 15px 15px 10px;
+    padding: 15px 12px 15px 10px;
     top: 20px;
 }
 
 .pgwSlideshow.narrow .ps-list .ps-next {
-    padding: 15px 10px 15px 15px;
+    padding: 15px 10px 15px 12px;
     top: 20px;
 }
 

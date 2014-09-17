@@ -106,8 +106,11 @@
         // Set list width
         var setListWidth = function() {
             var listWidth = 0;
+            
+            // The plugin must be visible for a correct calculation
+            pgwSlideshow.plugin.show();
 
-            pgwSlideshow.plugin.find('.ps-list > ul > li').each(function() {
+            pgwSlideshow.plugin.find('.ps-list > ul > li').show().each(function() {
                 listWidth += $(this).width();
             });
 
@@ -338,6 +341,10 @@
                 }
             }
 
+            // Update list items
+            pgwSlideshow.plugin.find('.ps-list > ul > li .ps-item').removeClass('ps-selected');
+            pgwSlideshow.plugin.find('.ps-list > ul > li.elt_' + element.id + ' .ps-item').addClass('ps-selected');
+
             // Check selected item
             if (pgwSlideshow.config.displayList) {
                 checkList();
@@ -512,7 +519,7 @@
 
         // Display current element
         var displayElement = function(elementId, apiController, direction) {
-            
+
             if (elementId == pgwSlideshow.currentSlide) {
                 return false;
             }
@@ -545,10 +552,6 @@
             } else {
                 fadeElement(element);
             }
-            
-            // Update list items
-            pgwSlideshow.plugin.find('.ps-list > ul > li .ps-item').removeClass('ps-selected');
-            pgwSlideshow.plugin.find('.ps-list > ul > li.elt_' + element.id + ' .ps-item').addClass('ps-selected');
 
             // Reset interval to avoid a half interval after an API control
             if (typeof apiController != 'undefined' && pgwSlideshow.config.autoSlide) {
