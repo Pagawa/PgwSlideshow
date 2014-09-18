@@ -133,7 +133,7 @@
         var setup = function() {
 
             // Create container
-            pgwSlideshow.plugin.removeClass(pgwSlideshow.config.mainClassName);
+            pgwSlideshow.plugin.removeClass('pgwSlideshow').removeClass(pgwSlideshow.config.mainClassName);
             pgwSlideshow.plugin.wrap('<div class="ps-list"></div>');
             pgwSlideshow.plugin = pgwSlideshow.plugin.parent();
 
