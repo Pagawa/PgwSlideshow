@@ -70,6 +70,7 @@
 
                     if (pgwSlideshow.config.displayList) {
                         checkList();
+                        checkSelectedItem();
                     }
                 }, 100);
             });
@@ -95,9 +96,17 @@
             if (typeof pgwSlideshow.plugin.find('.ps-current').animate == 'function') {
                 pgwSlideshow.plugin.find('.ps-current').stop().animate({
                     height: height
-                }, pgwSlideshow.config.adaptiveDuration);
+                }, pgwSlideshow.config.adaptiveDuration, function() {
+                    if (pgwSlideshow.config.maxHeight) {
+                        pgwSlideshow.plugin.find('.ps-current > ul > li img').css('max-height', height + 'px');
+                    }
+                });
             } else {
                 pgwSlideshow.plugin.find('.ps-current').css('height', height);
+                
+                if (pgwSlideshow.config.maxHeight) {
+                    pgwSlideshow.plugin.find('.ps-current > ul > li img').css('max-height', height + 'px');
+                }
             }
 
             return true;
@@ -588,7 +597,7 @@
 
             var containerObject = pgwSlideshow.plugin.find('.ps-list');
             var containerWidth = containerObject.width();
-            var listObject = pgwSlideshow.plugin.find('.ps-list ul');
+            var listObject = pgwSlideshow.plugin.find('.ps-list > ul');
             var listWidth = listObject.width();
 
             if (listWidth > containerWidth) {
@@ -642,7 +651,7 @@
                 // Touch controls for the list
                 if (pgwSlideshow.config.touchControls) {
 
-                    pgwSlideshow.plugin.find('.ps-list ul').on('touchmove', function(e) {
+                    pgwSlideshow.plugin.find('.ps-list > ul').on('touchmove', function(e) {
                         try {
                             if (e.originalEvent.touches[0].clientX) {
                                 var lastPosition = (pgwSlideshow.touchListLastPosition == false ? 0 : pgwSlideshow.touchListLastPosition);
@@ -689,7 +698,7 @@
                         }
                     });
 
-                    pgwSlideshow.plugin.find('.ps-list ul').on('touchend', function(e) {
+                    pgwSlideshow.plugin.find('.ps-list > ul').on('touchend', function(e) {
                         pgwSlideshow.touchListLastPosition = false;
                     });
                 }
@@ -699,7 +708,7 @@
                 listObject.css('left', 0).css('margin-left', marginLeft);
                 containerObject.find('.ps-prev').hide();
                 containerObject.find('.ps-next').hide();
-                pgwSlideshow.plugin.find('.ps-list ul').unbind('touchstart touchmove touchend');
+                pgwSlideshow.plugin.find('.ps-list > ul').unbind('touchstart touchmove touchend');
             }
 
             return true;
@@ -708,7 +717,7 @@
         // Check the visibility of the selected item
         var checkSelectedItem = function() {
             var containerWidth = pgwSlideshow.plugin.find('.ps-list').width();
-            var listObject = pgwSlideshow.plugin.find('.ps-list ul');
+            var listObject = pgwSlideshow.plugin.find('.ps-list > ul');
             var listWidth = listObject.width();  
 
             var marginLeft = parseInt(listObject.css('margin-left'));
@@ -833,14 +842,21 @@
             // Setup
             setup();
 
-            // Check list parameters
-            if (pgwSlideshow.config.displayList) {
-                checkList(); // todo: refaire ca comme init
+            // Resize listener
+            pgwSlideshow.window.resize(function() {
+                clearTimeout(pgwSlideshow.resizeEvent);
+                pgwSlideshow.resizeEvent = setTimeout(function() {
+                    setSizeClass();
 
-                $(window).resize(function() {
-                    checkList(); // iden todo plus haut
-                });
-            }
+                    var maxHeight = pgwSlideshow.plugin.find('.ps-current > ul > li.elt_' + pgwSlideshow.currentSlide + ' img').css('max-height', '').height();
+                    updateHeight(maxHeight);
+
+                    if (pgwSlideshow.config.displayList) {
+                        checkList();
+                        checkSelectedItem();
+                    }
+                }, 100);
+            });
 
             // Activate interval
             if (pgwSlideshow.config.autoSlide) {
