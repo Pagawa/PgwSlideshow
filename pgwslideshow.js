@@ -59,7 +59,7 @@
                 checkList();
             }
 
-            // Resize event
+            // Resize trigger
             pgwSlideshow.window.resize(function() {
                 clearTimeout(pgwSlideshow.resizeEvent);
                 pgwSlideshow.resizeEvent = setTimeout(function() {
@@ -729,7 +729,7 @@
             var elementZoneStart = pgwSlideshow.plugin.find('.ps-list .ps-selected').position().left;
             var elementZoneEnd = elementZoneStart + pgwSlideshow.plugin.find('.ps-list .ps-selected').width();
 
-            if ((elementZoneStart < visibleZoneStart) || (elementZoneEnd > visibleZoneEnd)) {
+            if ((elementZoneStart < visibleZoneStart) || (elementZoneEnd > visibleZoneEnd) || (listWidth > containerWidth && visibleZoneEnd > elementZoneEnd)) {
                 var maxPosition = -(listWidth - containerWidth);
 
                 if (-elementZoneStart < maxPosition) {
