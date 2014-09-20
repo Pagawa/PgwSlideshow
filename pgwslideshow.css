@@ -12,6 +12,10 @@
     display: none;
 }
 
+.pgwSlideshow a{
+    color: #fff;
+}
+
 .pgwSlideshow .ps-current {
     text-align: center;
     position: relative;
