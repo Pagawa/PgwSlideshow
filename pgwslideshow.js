@@ -11,7 +11,7 @@
 
         var defaults = {
             mainClassName : 'pgwSlideshow',
-            transitionEffect : 'fading',
+            transitionEffect : 'sliding',
             displayList : true,
             displayControls : true,
             touchControls : true,
