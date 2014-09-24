@@ -1,0 +1,38 @@
+{
+    "name": "pgwslideshow",
+    "title": "PgwSlideshow",
+    "description": "Responsive slideshow / gallery / carousel",
+    "keywords": [
+        "slider",
+        "slideshow",
+        "gallery",
+        "carousel",
+        "responsive",
+        "mobile",
+        "image",
+        "animation",
+        "ui"
+    ],
+    "version": "2.0.0",
+    "author": {
+        "name": "Jonathan M. Piat"
+    },
+    "maintainers": [
+        {
+            "name": "Jonathan M. Piat"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "GNU GPLv3",
+            "url": "http://opensource.org/licenses/gpl-3.0"
+        }
+    ],
+    "bugs": "https://github.com/Pagawa/PgwSlideshow/issues",
+    "homepage": "http://pgwjs.com/pgwslideshow",
+    "docs": "http://pgwjs.com/pgwslideshow",
+    "download": "http://pgwjs.com/pgwslideshow",
+    "dependencies": {
+        "jquery": ">=1"
+    }
+}
