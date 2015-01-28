@@ -1,0 +1,31 @@
+{
+  "name": "pgwslideshow",
+  "title": "PgwSlideshow",
+  "description": "Responsive slideshow / gallery / carousel for jQuery jQuery / Zepto",
+  "version": "2.0.0",
+  "main": "pgwslideshow.js",
+  "homepage": "https://pgwjs.com/pgwslideshow",
+  "author": "Jonathan M. Piat",
+  "license" : "GNU GPLv3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pagawa/PgwSlideshow.git"
+  },
+  "keywords": [
+    "slider",
+    "slideshow",
+    "gallery",
+    "carousel",
+    "responsive",
+    "mobile",
+    "image",
+    "animation",
+    "ui",
+    "jquery",
+    "jquery-plugin",
+    "zepto"
+  ],
+  "bugs": {
+    "url": "https://github.com/Pagawa/PgwSlideshow/issues"
+  }
+}
