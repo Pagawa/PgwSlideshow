@@ -84,7 +84,8 @@
     filter: alpha(opacity=60);
 }
 
-.pgwSlideshow .ps-list li img {
+.pgwSlideshow .ps-list li img,
+.pgwSlideshow .ps-list li video {
     display: block;
     border: 1px solid #777;
     width: 80px;
