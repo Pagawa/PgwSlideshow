@@ -85,7 +85,6 @@
 
         // Update the current height
         var updateHeight = function(height, animate) {
-
             // Check maxHeight
             if (pgwSlideshow.config.maxHeight) {
                 if (height + pgwSlideshow.plugin.find('.ps-list').height() > pgwSlideshow.config.maxHeight) {
@@ -224,6 +223,8 @@
                     currentElement.html('<img src="' + element.image + '" alt="' + (element.title ? element.title : '') + '">');
                 } else if (element.thumbnail) {
                     currentElement.html('<img src="' + element.thumbnail + '" alt="' + (element.title ? element.title : '') + '">');
+                } else if (element.video) {
+                    currentElement.html('<video controls><source src="' + element.video + '" type="video/mp4">Your browser does not support the video tag.</video>');
                 }
 
                 if (element.link) {
@@ -307,6 +308,11 @@
                 element.image = elementImage;
             }
 
+            var elementVideo = obj.find('video source').attr('src');
+            if ((typeof elementVideo != 'undefined') && (elementImage != '')) {
+                element.video = elementVideo;
+            }
+
             // Get title 
             var elementTitle = obj.find('img').attr('alt');
             if ((typeof elementTitle != 'undefined') && (elementTitle != '')) {
@@ -375,7 +381,13 @@
             }
 
             // Set the container height
-            var maxHeight = pgwSlideshow.plugin.find('.ps-current .elt_' + element.id + ' img').height();
+            var maxHeight;
+            if(element.video){
+                maxHeight = pgwSlideshow.plugin.find('.ps-current .elt_' + element.id + ' video').height();
+                maxHeight += 15;
+            }else{
+                maxHeight = pgwSlideshow.plugin.find('.ps-current .elt_' + element.id + ' img').height();
+            }
             updateHeight(maxHeight, true);
 
             return true;
