@@ -227,7 +227,11 @@
                 }
 
                 if (element.link) {
-                    currentElement.html('<a href="' + element.link + '"' + (element.linkTarget ? ' target="' + element.linkTarget + '"' : '') + '>' + currentElement.html() + '</a>');
+                    var LinkBuild = $('<a>' + currentElement.html() + '</a>')
+                    $.each(element.attributes,function(index, value){
+                        LinkBuild.attr(value.name,value.value)    
+                    })
+                    currentElement.html(LinkBuild);
                 }
 
                 pgwSlideshow.plugin.find('.ps-current > ul').append(currentElement);
@@ -294,6 +298,7 @@
                 if ((typeof elementLinkTarget != 'undefined') && (elementLinkTarget != '')) {
                     element.linkTarget = elementLinkTarget;
                 }
+                element.attributes = obj.find('a').prop('attributes') 
             }
 
             // Get image 
